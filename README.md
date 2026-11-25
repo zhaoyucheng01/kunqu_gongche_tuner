@@ -23,6 +23,7 @@ gongche_tuner/
 │   ├── src/com/kunqu/gongchetuner/MainActivity.java
 │   └── res/                    # 应用名称、主题样式与桌面图标资源
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
@@ -59,3 +60,7 @@ powershell -ExecutionPolicy Bypass -File android\build_apk.ps1 -Install -Launch
 - 音高计算依据 DB3205/T 1172—2025《苏式传统文化 昆曲清唱艺术传承指南》附录 B，采用十二平均律作为参考。
 - 传统昆笛的实际音高会因笛管、师承与演唱习惯略有差异，可通过界面中的「整体微调」按需校准。
 - 本工具仅作日常拍曲定调参考，不替代老师的笛色、腔格与口传心授。
+
+## 开源协议
+
+本项目采用 [MIT License](LICENSE) 开源。
