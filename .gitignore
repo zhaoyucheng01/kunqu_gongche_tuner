@@ -1,0 +1,15 @@
+# Android 构建产物与签名
+android/build/
+dist/
+*.apk
+*.aab
+*.idsig
+*.keystore
+*.jks
+local.properties
+
+# 编辑器与系统临时文件
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

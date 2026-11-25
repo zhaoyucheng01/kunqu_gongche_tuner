@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4d8c7a">
+<meta name="description" content="Kunqu Gongche pitch reference for seven traditional tuning modes">
+<title>昆曲工尺定调器</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#f4f2ec;--paper:#fffefa;--ink:#26332e;--muted:#77817b;
+  --line:#e6e3d9;--divider:#efece4;--green:#4d8c7a;--green-dark:#3d7464;--green2:#e6f1ec;--gold:#a27c3e;
+  --shadow:0 8px 24px rgba(36,49,42,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans SC","Microsoft YaHei",sans-serif}
+main{width:min(680px,100%);margin:0 auto;padding:18px 16px 28px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 12px}
+h1{font-size:23px;line-height:1.25;margin:0;font-weight:750;letter-spacing:.02em}
+.lang-toggle{
+  flex:none;width:38px;height:38px;border-radius:999px;
+  border:1px solid #dedad0;background:#fffefa;color:var(--ink);
+  font-size:15px;font-weight:600;line-height:1;
+  display:grid;place-items:center;cursor:pointer;
+  box-shadow:0 1px 3px rgba(36,49,42,.06);
+  transition:background .15s,border-color .15s,transform .12s;
+}
+.lang-toggle:hover{background:#fff;border-color:#cbc6ba}
+.lang-toggle:active{transform:scale(.95)}
+.lang-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;margin:10px 0;box-shadow:var(--shadow)}
+.block+.block{margin-top:14px;padding-top:14px;border-top:1px solid var(--divider)}
+.section-title{font-size:12px;font-weight:700;color:var(--muted);margin:0 0 9px;letter-spacing:.04em}
+.mode-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+button,select{font:inherit}
+.mode-btn{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px 4px;color:var(--ink);font-size:13px;min-height:40px;cursor:pointer;transition:background .15s,border-color .15s}
+.mode-btn.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
+.mode-btn small{display:block;font-size:10px;opacity:.72;margin-top:2px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.segment{display:flex;gap:7px;width:100%}
+.segment button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 4px;color:var(--ink);font-size:13px;cursor:pointer;transition:background .15s,border-color .15s}
+.segment button.active{background:var(--green2);border-color:#bad4c8;color:#2f6656;font-weight:700}
+.note-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.note-btn{min-height:78px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:border-color .15s,background .15s}
+.note-btn .gong{font-size:26px;line-height:1.1;font-weight:750}
+.note-btn .western{font-size:12px;color:var(--muted)}
+.note-btn .hz{font-size:10px;color:#9a9b93;font-variant-numeric:tabular-nums}
+.note-btn.active{border:2px solid var(--gold);background:#fbf6ea}
+.note-btn.active .gong{color:#805d26}
+.play-control{margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:7px}
+.play-button{
+  width:100%;min-height:58px;border:0;border-radius:14px;background:var(--green);color:#fff;
+  font-size:20px;font-weight:800;letter-spacing:.14em;box-shadow:0 6px 16px rgba(77,140,122,.24);
+  touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer;
+  transition:background .12s,transform .1s;
+}
+.play-button:active,.play-button.pressed{background:var(--green-dark);transform:scale(.99)}
+.play-button:focus-visible{outline:3px solid #b9975d;outline-offset:3px}
+.status{font-size:12px;color:var(--muted);min-height:18px;text-align:center;font-variant-numeric:tabular-nums}
+.status.active{color:var(--green);font-weight:600}
+.control{margin:11px 0 2px}
+.control-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:6px}
+.control-head span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--green)}
+select{border:1px solid var(--line);border-radius:10px;padding:7px 10px;background:#fff;color:var(--ink);font-size:13px}
+.note{background:#f7f4ec;border-left:3px solid var(--gold);padding:8px 11px;border-radius:8px;font-size:12px;line-height:1.6;color:#66604f;margin-top:12px}
+footer{font-size:11px;color:#8b9089;line-height:1.65;text-align:center;padding:10px 8px 4px}
+.action{border:0;border-radius:11px;padding:10px 14px;font-weight:650;font-size:13px;cursor:pointer}
+.action.secondary{background:var(--green2);color:var(--green);border:1px solid #d7e1d9}
+#installBtn{display:none;width:100%;margin:0 0 10px}
+@media(min-width:560px){
+  .mode-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .note-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .play-button{width:min(100%,340px)}
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1 id="appTitle">昆曲工尺定调器</h1>
+  <button id="langToggle" class="lang-toggle" type="button" aria-label="切换为繁體中文" title="切换为繁體中文">繁</button>
+</header>
+
+<button id="installBtn" class="action secondary" type="button">安装到手机桌面</button>
+
+<section class="card">
+  <div class="block">
+    <div class="section-title" id="sectionMode">调门</div>
+    <div class="mode-grid" id="modeGrid"></div>
+  </div>
+  <div class="block">
+    <div class="section-title" id="sectionRange">音区</div>
+    <div class="segment" id="rangeGroup">
+      <button type="button" data-range="-12">低音区</button>
+      <button type="button" data-range="0" class="active">中音区</button>
+      <button type="button" data-range="12">高音区</button>
+    </div>
+  </div>
+  <div class="block">
+    <div class="section-title" id="sectionNotes">工尺字</div>
+    <div class="note-grid" id="noteGrid"></div>
+    <div class="play-control">
+      <button class="play-button" id="playBtn" type="button" aria-pressed="false">发音</button>
+      <div class="status" id="status">按住发音 · 松开即停</div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="section-title" id="sectionSettings">声音与音高微调</div>
+  <div class="row" style="justify-content:space-between">
+    <label for="timbre" id="sectionTimbre" style="font-size:13px">音色</label>
+    <select id="timbre">
+      <option value="flute">笛音（泛音合成）</option>
+      <option value="sine">纯音（正弦波）</option>
+    </select>
+  </div>
+  <div class="control">
+    <div class="control-head"><label for="fine" id="sectionFine">整体微调</label><span id="fineValue">0 音分</span></div>
+    <input id="fine" type="range" min="-50" max="50" step="1" value="0">
+  </div>
+  <div class="control">
+    <div class="control-head"><label for="volume" id="sectionVolume">音量</label><span id="volumeValue">65%</span></div>
+    <input id="volume" type="range" min="5" max="100" step="1" value="65">
+  </div>
+  <div class="note" id="pitchNote">
+    音高以十二平均律为参考；传统昆笛因笛管与演唱习惯略有差异，可用「整体微调」校准。设置会自动保存在当前浏览器中。
+  </div>
+</section>
+
+<footer id="footerText">
+  参考：DB3205/T 1172—2025《苏式传统文化 昆曲清唱艺术传承指南》附录 B · 仅供音高参考
+</footer>
+</main>
+<script>
+const modes = [
+  {id:"shang",root:58,notes:["Bb","C","D","Eb","F","G","A"]},
+  {id:"chi",root:60,notes:["C","D","E","F","G","A","B"]},
+  {id:"xiaogong",root:62,notes:["D","E","F#","G","A","B","C#"]},
+  {id:"fan",root:63,notes:["Eb","F","G","Ab","Bb","C","D"]},
+  {id:"liu",root:65,notes:["F","G","A","Bb","C","D","E"]},
+  {id:"zhenggong",root:67,notes:["G","A","B","C","D","E","F#"]},
+  {id:"yi",root:69,notes:["A","B","C#","D","E","F#","G#"]}
+];
+const syllables=["上","尺","工","凡","六","五","乙"];
+const degrees=[0,2,4,5,7,9,11];
+let currentMode=modes[4], rangeShift=0, selectedIndex=2;
+let audioCtx=null, activeNodes=[], activeMaster=null, installPrompt=null;
+
+const I18N = {
+  "zh-CN": {
+    title:"昆曲工尺定调器",
+    langBtnText:"繁",
+    langBtnLabel:"切换为繁體中文",
+    install:"安装到手机桌面",
+    sectionMode:"调门",
+    sectionRange:"音区",
+    sectionNotes:"工尺字",
+    sectionSettings:"声音与音高微调",
+    low:"低音区", middle:"中音区", high:"高音区",
+    play:"发音",
+    idleHint:"按住发音 · 松开即停",
+    sustaining:(s,p,h)=>`正在发音：${s} · ${p} · ${h}`,
+    timbre:"音色", flute:"笛音（泛音合成）", sine:"纯音（正弦波）",
+    fine:"整体微调", volume:"音量",
+    note:"音高以十二平均律为参考；传统昆笛因笛管与演唱习惯略有差异，可用「整体微调」校准。设置会自动保存在当前浏览器中。",
+    footer:"参考：DB3205/T 1172—2025《苏式传统文化 昆曲清唱艺术传承指南》附录 B · 仅供音高参考",
+    keys:["上字调","尺字调","小工调","凡字调","六字调","正宫调","乙字调"],
+    major:["降B大调","C大调","D大调","降E大调","F大调","G大调","A大调"],
+    aria:(s,p,h)=>`${s}，${p}，${h}，选择此音`,
+    cents:v=>`${v>0?"+":""}${v} 音分`,
+    percent:v=>`${v}%`
+  },
+  "zh-TW": {
+    title:"崑曲工尺定調器",
+    langBtnText:"简",
+    langBtnLabel:"切換為简体中文",
+    install:"安裝到手機桌面",
+    sectionMode:"調門",
+    sectionRange:"音區",
+    sectionNotes:"工尺字",
+    sectionSettings:"聲音與音高微調",
+    low:"低音區", middle:"中音區", high:"高音區",
+    play:"發音",
+    idleHint:"按住發音 · 放開即停",
+    sustaining:(s,p,h)=>`正在發音：${s} · ${p} · ${h}`,
+    timbre:"音色", flute:"笛音（泛音合成）", sine:"純音（正弦波）",
+    fine:"整體微調", volume:"音量",
+    note:"音高以十二平均律為參考；傳統崑笛因笛管與演唱習慣略有差異，可用「整體微調」校準。設定會自動保存在目前瀏覽器中。",
+    footer:"參考：DB3205/T 1172—2025《蘇式傳統文化 崑曲清唱藝術傳承指南》附錄 B · 僅供音高參考",
+    keys:["上字調","尺字調","小工調","凡字調","六字調","正宮調","乙字調"],
+    major:["降B大調","C大調","D大調","降E大調","F大調","G大調","A大調"],
+    aria:(s,p,h)=>`${s}，${p}，${h}，選擇此音`,
+    cents:v=>`${v>0?"+":""}${v} 音分`,
+    percent:v=>`${v}%`
+  }
+};
+
+const $=id=>document.getElementById(id);
+let language="zh-CN";
+function tr(){ return I18N[language] || I18N["zh-CN"]; }
+
+function setIdleStatus(){
+  const el=$("status");
+  el.textContent=tr().idleHint;
+  el.classList.remove("active");
+}
+function setPlayingStatus(freq){
+  const el=$("status");
+  el.textContent=tr().sustaining(syllables[selectedIndex], pitchText(selectedIndex), hzText(freq));
+  el.classList.add("active");
+}
+
+function applyLanguage(){
+  const t=tr();
+  document.documentElement.lang=language;
+  document.title=t.title;
+  $("appTitle").textContent=t.title;
+  $("langToggle").textContent=t.langBtnText;
+  $("langToggle").setAttribute("aria-label",t.langBtnLabel);
+  $("langToggle").setAttribute("title",t.langBtnLabel);
+  $("installBtn").textContent=t.install;
+  $("sectionMode").textContent=t.sectionMode;
+  $("sectionRange").textContent=t.sectionRange;
+  $("sectionNotes").textContent=t.sectionNotes;
+  $("sectionSettings").textContent=t.sectionSettings;
+  $("sectionTimbre").textContent=t.timbre;
+  $("sectionFine").textContent=t.fine;
+  $("sectionVolume").textContent=t.volume;
+  $("pitchNote").textContent=t.note;
+  $("footerText").innerHTML=t.footer;
+  $("timbre").options[0].text=t.flute;
+  $("timbre").options[1].text=t.sine;
+  $("playBtn").textContent=t.play;
+  const rb=$("rangeGroup").querySelectorAll("button");
+  [t.low,t.middle,t.high].forEach((v,i)=>rb[i].textContent=v);
+  renderAll();
+  syncSettingLabels();
+  if(activePress) setPlayingStatus(currentFrequency(selectedIndex));
+  else setIdleStatus();
+}
+
+const SETTINGS_KEY="kunqu-gongche-tuner-settings-v1";
+function saveSettings(){
+  const data={
+    mode:currentMode.id,
+    language,
+    rangeShift,
+    selectedIndex,
+    timbre:$("timbre").value,
+    fine:Number($("fine").value),
+    volume:Number($("volume").value)
+  };
+  try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(data)); }catch(e){}
+}
+function loadSettings(){
+  let data=null;
+  try{ data=JSON.parse(localStorage.getItem(SETTINGS_KEY)||"null"); }catch(e){}
+  if(!data || typeof data!=="object") return;
+  const mode=modes.find(m=>m.id===data.mode);
+  if(mode) currentMode=mode;
+  if(["zh-CN","zh-TW"].includes(data.language)) language=data.language;
+  if([-12,0,12].includes(Number(data.rangeShift))) rangeShift=Number(data.rangeShift);
+  if(Number.isInteger(data.selectedIndex) && data.selectedIndex>=0 && data.selectedIndex<7) selectedIndex=data.selectedIndex;
+  if(["flute","sine"].includes(data.timbre)) $("timbre").value=data.timbre;
+  if(Number.isFinite(Number(data.fine))) $("fine").value=Math.max(-50,Math.min(50,Number(data.fine)));
+  if(Number.isFinite(Number(data.volume))) $("volume").value=Math.max(5,Math.min(100,Number(data.volume)));
+}
+function syncSettingLabels(){
+  $("volumeValue").textContent=tr().percent(Number($("volume").value));
+  $("fineValue").textContent=tr().cents(Number($("fine").value));
+}
+function midiToFreq(midi){return 440*Math.pow(2,(midi-69)/12)}
+function octaveOf(midi){return Math.floor(midi/12)-1}
+function currentMidi(i){return currentMode.root+degrees[i]+rangeShift}
+function pitchText(i){return currentMode.notes[i]+octaveOf(currentMidi(i))}
+function currentFrequency(i){return midiToFreq(currentMidi(i))*Math.pow(2,Number($("fine").value)/1200)}
+function hzText(v){return v.toFixed(2)+" Hz"}
+
+function renderModes(){
+  $("modeGrid").innerHTML="";
+  modes.forEach((m,i)=>{
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="mode-btn"+(m.id===currentMode.id?" active":"");
+    b.innerHTML=tr().keys[i]+"<small>"+tr().major[i]+"</small>";
+    b.addEventListener("click",()=>{stopSound();currentMode=m;saveSettings();renderAll();});
+    $("modeGrid").appendChild(b);
+  });
+}
+function renderNotes(){
+  $("noteGrid").innerHTML="";
+  syllables.forEach((s,i)=>{
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="note-btn"+(i===selectedIndex?" active":"");
+    b.innerHTML=`<span class="gong">${s}</span><span class="western">${pitchText(i)}</span><span class="hz">${hzText(currentFrequency(i))}</span>`;
+    b.setAttribute("aria-label",tr().aria(s,pitchText(i),hzText(currentFrequency(i))));
+    b.addEventListener("click",()=>{
+      stopSound();
+      selectedIndex=i;
+      saveSettings();
+      renderNotes();
+    });
+    $("noteGrid").appendChild(b);
+  });
+}
+function renderAll(){ renderModes(); renderNotes(); }
+
+function getContext(){
+  if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();}
+  if(audioCtx.state==="suspended") audioCtx.resume();
+  return audioCtx;
+}
+function stopVoice(){
+  if(audioCtx&&activeMaster){
+    const now=audioCtx.currentTime;
+    try{
+      activeMaster.gain.cancelScheduledValues(now);
+      activeMaster.gain.setTargetAtTime(0.0001,now,0.025);
+      activeNodes.forEach(n=>{try{n.stop(now+0.12)}catch(e){}});
+    }catch(e){}
+  }
+  activeNodes=[];activeMaster=null;
+}
+function makeVoice(freq){
+  const ctx=getContext();
+  const master=ctx.createGain();
+  master.gain.value=0.0001;
+  master.connect(ctx.destination);
+  const timbre=$("timbre").value;
+  const partials=timbre==="sine"?[[1,1]]:[[1,1],[2,0.24],[3,0.09],[4,0.035]];
+  const nodes=[];
+  partials.forEach(([mult,level])=>{
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.type="sine";
+    osc.frequency.value=freq*mult;
+    gain.gain.value=level;
+    osc.connect(gain);gain.connect(master);osc.start();
+    nodes.push(osc);
+  });
+  activeNodes=nodes;activeMaster=master;
+  return {ctx,master,nodes};
+}
+function startTone(freq){
+  stopVoice();
+  const {ctx,master}=makeVoice(freq);
+  const now=ctx.currentTime, volume=Number($("volume").value)/100;
+  master.gain.setValueAtTime(0.0001,now);
+  master.gain.exponentialRampToValueAtTime(Math.max(0.001,volume),now+0.035);
+  setPlayingStatus(freq);
+}
+function stopSound(){
+  stopVoice();
+  setIdleStatus();
+}
+
+let activePress=false;
+function beginPlaybackPress(event){
+  if(event && event.type==="pointerdown"){
+    if(event.button!==undefined && event.button!==0) return;
+    event.preventDefault();
+    try{event.currentTarget.setPointerCapture(event.pointerId);}catch(e){}
+  }else if(event && event.preventDefault){
+    event.preventDefault();
+  }
+  if(activePress) return;
+  activePress=true;
+  $("playBtn").classList.add("pressed");
+  $("playBtn").setAttribute("aria-pressed","true");
+  getContext();
+  startTone(currentFrequency(selectedIndex));
+}
+function endPlaybackPress(){
+  if(!activePress) return;
+  activePress=false;
+  $("playBtn").classList.remove("pressed");
+  $("playBtn").setAttribute("aria-pressed","false");
+  stopSound();
+}
+function cancelPlaybackPress(){
+  if(!activePress) return;
+  activePress=false;
+  $("playBtn").classList.remove("pressed");
+  $("playBtn").setAttribute("aria-pressed","false");
+  stopSound();
+}
+
+$("playBtn").addEventListener("pointerdown",beginPlaybackPress);
+$("playBtn").addEventListener("pointerup",endPlaybackPress);
+$("playBtn").addEventListener("pointercancel",cancelPlaybackPress);
+$("playBtn").addEventListener("lostpointercapture",cancelPlaybackPress);
+$("playBtn").addEventListener("contextmenu",e=>e.preventDefault());
+$("playBtn").addEventListener("keydown",e=>{
+  if(e.code==="Space"||e.code==="Enter"){if(!activePress)beginPlaybackPress(e);}
+});
+$("playBtn").addEventListener("keyup",e=>{
+  if(e.code==="Space"||e.code==="Enter")endPlaybackPress();
+});
+window.addEventListener("blur",cancelPlaybackPress);
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){
+    if(activePress) cancelPlaybackPress();
+    else stopSound();
+  }
+});
+$("rangeGroup").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+  stopSound();rangeShift=Number(b.dataset.range);
+  saveSettings();
+  $("rangeGroup").querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));
+  renderNotes();
+}));
+$("fine").addEventListener("input",()=>{
+  saveSettings();syncSettingLabels();renderNotes();
+  if(activePress) startTone(currentFrequency(selectedIndex));
+});
+$("volume").addEventListener("input",()=>{
+  saveSettings();syncSettingLabels();
+  if(activePress) startTone(currentFrequency(selectedIndex));
+});
+$("timbre").addEventListener("change",()=>{
+  saveSettings();
+  if(activePress) startTone(currentFrequency(selectedIndex));
+});
+$("langToggle").addEventListener("click",()=>{
+  language = language==="zh-CN" ? "zh-TW" : "zh-CN";
+  saveSettings();
+  applyLanguage();
+});
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();installPrompt=e;$("installBtn").style.display="block";
+});
+$("installBtn").addEventListener("click",async()=>{
+  if(!installPrompt)return;
+  installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$("installBtn").style.display="none";
+});
+if("serviceWorker" in navigator && location.protocol!=="file:"){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+loadSettings();
+$("rangeGroup").querySelectorAll("button").forEach(b=>b.classList.toggle("active", Number(b.dataset.range)===rangeShift));
+applyLanguage();
+saveSettings();
+</script>
+</body>
+</html>
