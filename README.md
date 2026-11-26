@@ -1,15 +1,19 @@
 # 昆曲工尺定调器
 
-一款轻量、离线的昆曲工尺谱定调工具，支持浏览器直接使用，并提供极简原生 WebView 封装的 Android APK 构建脚本。
+日常拍曲想找个准音，打开网页就能起调，不用联网，也不用装依赖。如果习惯在手机上随手点开，仓库里也附带了原生 WebView 的 Android 打包脚本，几秒钟就能编出 APK。
 
-## 功能特性
+## 界面预览
 
-- **七调门切换**：支持上字调、尺字调、小工调、凡字调、六字调、正宫调、乙字调，自动对应十二平均律音名与频率。
-- **三音区与工尺七音**：支持低音区、中音区、高音区切换，覆盖「上、尺、工、凡、六、五、乙」七个工尺音。
-- **按住即响**：基于 Web Audio API 实时合成音频，按住「发音」键持续发声，松开即停。
-- **声音与音高微调**：支持笛音（泛音合成）与纯音（正弦波）两种音色，提供 `-50` 至 `+50` 音分整体微调与音量调节。
-- **简繁一键切换**：顶栏右上角提供圆形语言切换按钮，支持简体中文与繁體中文实时切换。
-- **本地设置记忆**：调门、音区、语言、音色、微调与音量自动保存在当前设备本地存储中，完全离线可用。
+| 桌面端（简体 · 六字调） | 移动端（繁體 · 小工调） |
+| :---: | :---: |
+| <img src="docs/preview-desktop.png" alt="昆曲工尺定调器桌面端界面" width="460"> | <img src="docs/preview-mobile.png" alt="昆曲工尺定调器移动端界面" width="240"> |
+
+## 它能做什么
+
+- **七调门与三音区**，覆盖上字调、尺字调、小工调、凡字调、六字调、正宫调、乙字调，搭配低、中、高三个音区，对应「上、尺、工、凡、六、五、乙」七个工尺音，每个音格里直接标出了十二平均律音名和频率。
+- **按住即响，松开即停**，声音由浏览器内置的 Web Audio API 实时合成，可选笛音（泛音合成）或纯音（正弦波）。
+- **音高微调**，传统昆笛受笛管和师承习惯影响，音高未必完全卡在十二平均律上，可以通过 `-50` 到 `+50` 音分的整体微调来对齐。
+- **简繁切换与本地记忆**，点一下右上角的「繁 / 简」圆钮就能切换界面文字；调门、音区、音色、微调和音量都会保存在当前设备里，下次打开还是原来的设置。
 
 ## 目录结构
 
@@ -17,6 +21,9 @@
 gongche_tuner/
 ├── kunqu_gongche_tuner.html    # 单文件 Web 定调器源码
 ├── kunqu-gongche-tuner.apk     # 本地构建生成的 Android 安装包（默认不纳入 Git）
+├── docs/                       # README 界面预览截图
+│   ├── preview-desktop.png
+│   └── preview-mobile.png
 ├── android/                    # 极简原生 WebView Android 工程
 │   ├── AndroidManifest.xml
 │   ├── build_apk.ps1           # 一键编译、签名、安装与启动脚本
@@ -31,19 +38,13 @@ gongche_tuner/
 
 ### 1. 浏览器直接使用
 
-直接在电脑或手机浏览器中打开 `kunqu_gongche_tuner.html` 即可离线使用，无需安装任何依赖。
+在电脑或手机浏览器中直接打开 `kunqu_gongche_tuner.html` 就能离线使用。
 
 ### 2. 本地构建 Android APK
 
-构建脚本直接调用本机 Android SDK 工具链（`aapt2`、`javac`、`d8`、`zipalign`、`apksigner`），无需 Gradle 依赖，约数秒即可完成打包。
+打包脚本直接调用本机 Android SDK 工具链（`aapt2`、`javac`、`d8`、`zipalign`、`apksigner`），不走 Gradle，几秒就能出包。
 
-**环境要求**：
-
-- Windows PowerShell
-- Android SDK（含 `platforms` 与 `build-tools`）
-- JDK 11 及以上（脚本可自动检测 Android Studio 内置的 `jbr`）
-
-**构建命令**：
+需要提前准备好 Windows PowerShell、Android SDK（含 `platforms` 与 `build-tools`），以及 JDK 11 及以上版本（如果装过 Android Studio，脚本会自动去检测内置的 `jbr`）。
 
 ```powershell
 # 仅构建 APK（输出到项目根目录 kunqu-gongche-tuner.apk）
@@ -53,13 +54,12 @@ powershell -ExecutionPolicy Bypass -File android\build_apk.ps1
 powershell -ExecutionPolicy Bypass -File android\build_apk.ps1 -Install -Launch
 ```
 
-> 说明：脚本每次构建都会自动将根目录最新的 `kunqu_gongche_tuner.html` 打包进 APK，无需手动同步网页源码。
+每次构建都会自动把根目录最新的 `kunqu_gongche_tuner.html` 打进 APK，不用手动同步网页源码。
 
 ## 音高参考说明
 
-- 音高计算依据 DB3205/T 1172—2025《苏式传统文化 昆曲清唱艺术传承指南》附录 B，采用十二平均律作为参考。
-- 传统昆笛的实际音高会因笛管、师承与演唱习惯略有差异，可通过界面中的「整体微调」按需校准。
-- 本工具仅作日常拍曲定调参考，不替代老师的笛色、腔格与口传心授。
+- 音高计算依据 `DB3205/T 1172—2025`《苏式传统文化 昆曲清唱艺术传承指南》附录 B，采用十二平均律作为参考。
+- 工具只作日常拍曲定调参考，替代不了老师的笛色、腔格与口传心授。
 
 ## 开源协议
 
