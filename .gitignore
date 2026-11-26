@@ -2,6 +2,7 @@
 android/build/
 dist/
 *.apk
+!/*.apk
 *.aab
 *.idsig
 *.keystore
